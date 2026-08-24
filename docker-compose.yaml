@@ -19,10 +19,9 @@ services:
     networks:
         - lab-net
   network-probe:
-    image: ubuntu:latest
+    build: ./probe
     container_name: network-probe
-    networks:
-      - lab-net
+    network_mode: "service:go-server"
     tty: true
     stdin_open: true
     stop_grace_period: 1s
