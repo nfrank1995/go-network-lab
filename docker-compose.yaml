@@ -10,18 +10,22 @@ services:
         - lab-net
 
   go-client:
-    image: golang:1.26-alpine
+    build:
+      context: .
+      dockerfile: client/Dockerfile
     container_name: go-client
-    volumes: 
-      - ./client:/app
-    working_dir: /app
-    command: go run main.go
     networks:
         - lab-net
+
   network-probe:
     build: ./probe
     container_name: network-probe
+    volumes:
+        - ./captures:/workspace/captures
+        - ./certs:/workspace/certs:ro 
     network_mode: "service:go-server"
+    cap_add:
+      - NET_ADMIN
     tty: true
     stdin_open: true
     stop_grace_period: 1s

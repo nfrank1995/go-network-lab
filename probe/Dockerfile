@@ -7,6 +7,7 @@ RUN apt-get update && apt-get install -y --no-install-recommends \
 	iputils-ping \
 	curl \
 	iproute2 \
+	iptables \
 	dnsutils \
 	net-tools \
 	iperf3 \
