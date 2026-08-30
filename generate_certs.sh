@@ -24,7 +24,8 @@ openssl req -x509 -new -nodes \
 	-sha256 \
 	-days 356 \
 	-out root_ca.crt \
-	-subj "/CN=My-Local-Lab-Root-CA/O=DevLab"
+	-subj "/CN=My-Local-Lab-Root-CA/O=DevLab" \
+	-addext "basicConstraints=critical,CA:TRUE"
 
 echo "Generating Go Server Key & Request (CSR)..."
 openssl genrsa -out server.key 2048
@@ -36,9 +37,9 @@ openssl req -new \
 
 echo "Creating SAN Extension Profile..."
 cat <<EOF > server.ext
-authorityKeyIdentifier=keyid.issuer
+authorityKeyIdentifier=keyid,issuer
 basicConstraints=CA:FALSE
-keyUsage = digitalSinature, nonRepudiation, keyEncipherment, dataEncipherment
+keyUsage = digitalSignature, nonRepudiation, keyEncipherment, dataEncipherment
 subjectAltName = @alt_names
 
 [alt_names]
@@ -47,7 +48,7 @@ DNS.2 = localhost
 EOF
 
 echo "Signing Server Certificate with Local Root CA..."
-opensslt x509 -req -in server.csr \
+openssl x509 -req -in server.csr \
 	-CA root_ca.crt \
 	-CAkey root_ca.key \
 	-CAcreateserial \
